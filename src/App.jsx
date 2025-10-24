@@ -8,8 +8,18 @@ export const App = () => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isSorted, setIsSorted] = useState(false)
 	const [refreshTodosFlag, setRefreshTodosFlag] = useState(false)
+	const [debounceQuery, setDebounceQuery] = useState('')
 
 	const refreshTodos = () => setRefreshTodosFlag(!refreshTodosFlag)
+	const DEBOUNCE_MS = 500
+
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebounceQuery(searchQuery)
+		}, DEBOUNCE_MS)
+
+		return () => clearTimeout(handler)
+	}, [searchQuery, DEBOUNCE_MS])
 
 	useEffect(() => {
 		setIsLoading(true)
@@ -18,7 +28,7 @@ export const App = () => {
 			.then(res => res.json())
 			.then((loadedTodos) => {
 				let filtered = loadedTodos.filter(todo =>
-					todo.text.toLowerCase().includes(searchQuery.toLowerCase())
+					todo.text.toLowerCase().includes(debounceQuery.toLowerCase())
 				)
 
 				if (isSorted) {
@@ -28,7 +38,7 @@ export const App = () => {
 				setTodos(filtered)
 			})
 			.finally(() => setIsLoading(false))
-	}, [refreshTodosFlag, searchQuery, isSorted])
+	}, [refreshTodosFlag, debounceQuery, isSorted])
 
 	const requestAddTodo = () => {
 		if (!text.trim()) return
@@ -66,7 +76,8 @@ export const App = () => {
 	}
 
 	return (
-        <div className={styles.app}>
+        <div className={styles.todo}>
+			<h1 className={styles.title}>To Do List</h1>
             <input
                 value={text}
                 onChange={e => setText(e.target.value)}
@@ -80,17 +91,17 @@ export const App = () => {
                 placeholder="Поиск..."
             />
 
-            <button onClick={() => setIsSorted(!isSorted)}>
+            <button className={styles.sortBtn} onClick={() => setIsSorted(!isSorted)}>
                 {isSorted ? 'Отключить сортировку' : 'Сортировать А-Я'}
             </button>
 
             {isLoading
                 ? <div>Загружаю...</div>
                 : todos.map(({ id, text }) => (
-                    <div key={id}>
-                        {text}
+                    <div className={styles.todoItem} key={id}>
+                        <span className={styles.todoText}> {text} </span>
                         <button onClick={() => requestUpdateTodos(id)}>Изменить</button>
-                        <button onClick={() => requestDeleteTodo(id)}>Удалить</button>
+                        <button className={styles.deleteBtn} onClick={() => requestDeleteTodo(id)}>Удалить</button>
                     </div>
                 ))
             }
