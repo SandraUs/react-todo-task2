@@ -1,19 +1,24 @@
 {
-  "posts": [
+  "todos": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
+      "text": "покормить",
+      "id": 3
+    },
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "text": "отменить встречу",
+      "id": 4
+    },
+    {
+      "text": "купить молока",
+      "id": 5
+    },
+    {
+      "text": "купить капусту",
+      "id": 6
+    },
+    {
+      "text": "сходить в магазин",
+      "id": 7
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
